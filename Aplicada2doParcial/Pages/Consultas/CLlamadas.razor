@@ -1,0 +1,125 @@
+﻿@page "/CLlamadas"
+
+<div class="container">
+    <h1 class="display-3 text-center">Consulta deLlamadas</h1>
+    <EditForm Model="Llamada">
+        <div class="form-row">
+            <div class="form-group col">
+                <label>Criterio</label>
+                <InputText @bind-Value="Criterio" class="form-control" />
+            </div>
+
+            <div class="form-group col">
+                <label>Opcion de busqueda</label>
+                <div class="input-group">
+                    <InputSelect @bind-Value="Seleccion" class="form-control">
+                        <option value="0">Todos</option>
+                        <option value="1">Id</option>
+                        <option value="2">Descripcion</option>
+
+                    </InputSelect>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-primary" @onclick="FiltrarBusqueda">Buscar</button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </EditForm>
+
+    <div>
+
+        <table class="table">
+            <thead class="thead-dark">
+
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">Cant. Problemas</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @if (ListaLlamadas.Count > 0)
+                {
+                    @foreach (var llamada in ListaLlamadas)
+                    {
+                        <tr>
+                            <td scope="row">@llamada.LlamadaId</td>
+                            <td>@llamada.Descripcion</td>
+                            <td>@llamada.Casos.Count()</td>
+                            <td><a type="button" class="btn btn-outline-primary" href="/RLlamadas/@llamada.LlamadaId">Ver</a></td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+</div>
+
+@code {
+
+    public List<Llamadas> ListaLlamadas { get; set; }
+
+    public string Criterio { get; set; }
+    public string Seleccion { get; set; }
+    public Llamadas Llamada { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ListaLlamadas = new List<Llamadas>();
+        Llamada = new Llamadas();
+        Seleccion = "0";
+        CargarLista();
+    }
+
+    private void CargarLista()
+    {
+        try
+        {
+            ListaLlamadas = LlamadasController.GetList(A => true);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    private void FiltrarBusqueda()
+    {
+        try
+        {
+            switch (Seleccion)
+            {
+                case "1":
+                    ListaLlamadas = LlamadasController.GetList(A => A.LlamadaId == int.Parse(Criterio));
+                    break;
+
+                case "2":
+                    ListaLlamadas = LlamadasController.GetList(A => A.Descripcion.Contains(Criterio));
+                    break;
+
+                default:
+                    CargarLista();
+                    break;
+            }
+        }
+        catch (Exception)
+        {
+
+           
+        }
+    }
+
+
+
+
+
+}
