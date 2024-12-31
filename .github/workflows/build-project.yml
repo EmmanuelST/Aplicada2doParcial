@@ -23,7 +23,9 @@ jobs:
     - name: Display Directory
       run: ls
     - name: Change Directory
-      run: cd /Aplicada2doParcial
+      run: cd Aplicada2doParcial
+    - name: Display Directory
+      run: ls
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
